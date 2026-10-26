@@ -1,0 +1,71 @@
+newman
+
+Alarm API Simulator E2E
+
+Root 00 - Health
+  GET http://localhost:8000/health [200 OK, 289B, 26ms]
+
+Root 01 - Search Asset (sets asset_id)
+  GET http://localhost:8000/assets/search?query=Boiler Feed Pump 101&limit=10 [200 OK, 1.62kB, 6ms]
+  Pass  Status 200
+
+Root 02 - Asset Metadata
+  GET http://localhost:8000/assets/AST-BFP-101/metadata [200 OK, 915B, 5ms]
+
+Root 03 - Get Alarms (sets alarm_id)
+  GET http://localhost:8000/alarms?asset_id=AST-BFP-101&page=1&page_size=50&sort_by=start_time&sort_order=desc [200 OK, 24.37kB, 5ms]
+  Pass  Status 200
+
+Root 04 - Get Alarm by ID
+  GET http://localhost:8000/alarms/ALM-001794 [200 OK, 657B, 3ms]
+
+Root 05 - Alarm Summary (trace headers)
+  POST http://localhost:8000/alarms/summary [200 OK, 893B, 7ms]
+
+Root 06 - Alarm Trends
+  POST http://localhost:8000/alarms/trends [200 OK, 5.01kB, 8ms]
+
+Root 07 - Alarm Correlation (trace headers)
+  POST http://localhost:8000/alarms/correlation [200 OK, 2.14kB, 6ms]
+
+Root 08 - Flood Analysis
+  POST http://localhost:8000/alarms/flood-analysis [200 OK, 1.33kB, 6ms]
+
+Root 09 - Rationalization Candidates
+  POST http://localhost:8000/alarms/rationalization-candidates [200 OK, 1.33kB, 4ms]
+
+Root 10 - Priority Score
+  POST http://localhost:8000/alarms/priority-score [200 OK, 690B, 4ms]
+
+Root 11 - Operator Recommendations (trace headers)
+  POST http://localhost:8000/recommendations/operator-actions [200 OK, 1.69kB, 5ms]
+
+Root 12 - Generate Calculation Code (sets calculation_id)
+  POST http://localhost:8000/calculation-code/generate [200 OK, 575B, 3ms]
+  Pass  Status 200
+
+Root 13 - Execute Calculation Code (trace headers)
+  POST http://localhost:8000/calculation-code/execute [200 OK, 410B, 4ms]
+
+Root 14 - KPI Definitions
+  GET http://localhost:8000/analytics/kpi-definitions [200 OK, 845B, 4ms]
+
+---------------------------------------------------------------
+|                         |        executed |          failed |
+--------------------------+-----------------+------------------
+|              iterations |               1 |               0 |
+--------------------------+-----------------+------------------
+|                requests |              15 |               0 |
+--------------------------+-----------------+------------------
+|            test-scripts |               3 |               0 |
+--------------------------+-----------------+------------------
+|      prerequest-scripts |               0 |               0 |
+--------------------------+-----------------+------------------
+|              assertions |               3 |               0 |
+---------------------------------------------------------------
+| total run duration: 281ms                                   |
+---------------------------------------------------------------
+| total data received: 39.63kB (approx)                       |
+---------------------------------------------------------------
+| average response time: 6ms [min: 3ms, max: 26ms, s.d.: 5ms] |
+---------------------------------------------------------------

@@ -1,0 +1,58 @@
+# Start everything:  docker compose up --build
+#   GUI / copilot  -> http://localhost:8080
+#   Alarm API      -> http://localhost:8000  (Postman baseUrl)
+#   MCP server     -> http://localhost:9000/mcp
+
+services:
+  alarm-api:
+    build: .
+    command: uvicorn apps.alarm_simulator.main:app --host 0.0.0.0 --port 8000
+    environment:
+      ALARM_API_TOKEN: ${ALARM_API_TOKEN:-demo-token}
+      SIM_FAILURE_RATE: ${SIM_FAILURE_RATE:-0}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  alarm-mcp:
+    build: .
+    command: python mcp-servers/alarm-management/alarm_mcp_server.py
+    environment:
+      MCP_TRANSPORT: streamable-http
+      MCP_HOST: 0.0.0.0
+      MCP_PORT: 9000
+      ALARM_API_BASE_URL: http://alarm-api:8000
+      ALARM_API_TOKEN: ${ALARM_API_TOKEN:-demo-token}
+      MCP_DISABLED_TOOLS: ${MCP_DISABLED_TOOLS:-}
+    ports:
+      - "9000:9000"
+    depends_on:
+      alarm-api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:9000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  copilot:
+    build: .
+    command: uvicorn apps.backend.app:app --host 0.0.0.0 --port 8080
+    environment:
+      MCP_SERVER_URL: http://alarm-mcp:9000
+      LLM_PROVIDER: ${LLM_PROVIDER:-none}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      alarm-mcp:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fs", "http://localhost:8080/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 10

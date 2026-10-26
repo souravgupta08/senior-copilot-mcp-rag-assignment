@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Alarm API Simulator - Chaining Flows" tests="32" time="0.150">
+  <testsuite name="CHAIN-01 Asset -> Summary -> Rationalization / 1) Search Boiler Feed Pump 101" id="e5269270-7365-411a-8302-64e37bc7dd0d" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.024"/>
+  <testsuite name="CHAIN-01 Asset -> Summary -> Rationalization / 2) Alarm Summary" id="3477969a-cc31-4476-b7c7-b23fc0fe5583" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.007"/>
+  <testsuite name="CHAIN-01 Asset -> Summary -> Rationalization / 3) Rationalization Candidates" id="ea42fea0-8b64-4fcd-bf23-263f53c9decd" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-02 Flood -> Alarms -> Summary / 1) Flood Analysis Unit 2" id="a2c60f2b-c334-432d-a697-cfcab70487f5" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-02 Flood -> Alarms -> Summary / 2) Get Alarms for Window" id="ab4416bd-18af-448f-828c-6f4b455152b4" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-02 Flood -> Alarms -> Summary / 3) Summary by Asset+Severity" id="719ef62a-a55c-4b6d-b5e5-3262e015afde" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-03 Root Cause + Recommendations / 1) Search Compressor Assets" id="e9fe0cc0-4ea2-4d66-8be3-c00853fb8313" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-03 Root Cause + Recommendations / 2) Correlation" id="e9a84f09-6f97-45b0-8364-c6c7260e3692" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.009"/>
+  <testsuite name="CHAIN-03 Root Cause + Recommendations / 3) Get Latest Alarm on Asset" id="b19723b8-abbd-40f1-9adb-618e9250c2ed" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.005"/>
+  <testsuite name="CHAIN-03 Root Cause + Recommendations / 4) Asset Metadata" id="a50e2583-9afc-4401-90ce-7e5449f72b85" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-03 Root Cause + Recommendations / 5) Operator Recommendations" id="510f0704-b4f6-4349-83e7-6a6ff69fa1b4" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-04 Critical Density KPI -> Execute -> Summary / 1) Generate Calculation" id="15d323e3-f705-4afa-bd38-14c27da07125" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.005"/>
+  <testsuite name="CHAIN-04 Critical Density KPI -> Execute -> Summary / 2) Execute Calculation" id="aa09b2a0-ee6d-4eeb-8f72-e8f4e7235788" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-04 Critical Density KPI -> Execute -> Summary / 3) Summary by Asset" id="070f04e6-f2c8-42e2-b031-352f39cf87e6" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-05 Asset Active -> Recommendation / 1) Search Boiler Feed Pump 102" id="77554dd3-c168-430c-af9d-2e8fe206af41" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.002"/>
+  <testsuite name="CHAIN-05 Asset Active -> Recommendation / 2) Get Active Alarms" id="e74d4cb2-c33f-4151-b377-dc2bd648ee8c" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-05 Asset Active -> Recommendation / 3) Recommendations" id="3cfcda96-4646-4ec6-a26d-1692625c99d6" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-06 Stale + Severity Context / 1) Rationalization Candidates" id="675aff28-6bd8-4881-a631-51aa3fee40bb" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-06 Stale + Severity Context / 2) Summary by Severity" id="07d4ac06-dbdd-4b26-b782-cf962be3582e" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-07 Response Efficiency + Trend / 1) Generate Efficiency Calc" id="6969743c-5d99-44ef-b9f7-5ff6a4f86469" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-07 Response Efficiency + Trend / 2) Execute Efficiency Calc" id="55f2a025-e8c0-4682-8581-10b1fc50e912" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-07 Response Efficiency + Trend / 3) Trends" id="1d9bed50-6825-464e-b679-5907fa45698c" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.006"/>
+  <testsuite name="CHAIN-08 Motor Correlation / 1) Search Motor Assets Unit 5" id="bf4a1fe1-ee80-4ae0-aa55-3391cfb763d6" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-08 Motor Correlation / 2) Correlation" id="9a7d8c55-9aaf-4709-945f-6da1caff8a7c" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-08 Motor Correlation / 3) Summary Context" id="85efa0cc-f465-49c2-8060-458e2863517b" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-09 East Active -> Priority -> Recommendation / 1) Get EastRefinery Active Alarms" id="a8d2e68c-6bdc-4740-9314-e87c91d3ed0e" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-09 East Active -> Priority -> Recommendation / 2) Alarm Detail" id="d6b82fd1-a8fb-4165-863e-54fe7760abf7" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-09 East Active -> Priority -> Recommendation / 3) Priority Score" id="d522f0be-6016-4334-805e-517ccb09410e" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-09 East Active -> Priority -> Recommendation / 4) Recommendations" id="9e9d767a-8bd2-4641-a9e1-4f15c049a64b" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="CHAIN-10 Nuisance KPI -> Execute -> Candidates / 1) Generate Nuisance Calculation" id="c34cbac6-25bc-41a4-8082-db215c893eb1" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-10 Nuisance KPI -> Execute -> Candidates / 2) Execute Nuisance Calculation" id="8734802a-ca7a-464b-9b18-264754c30bdc" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="CHAIN-10 Nuisance KPI -> Execute -> Candidates / 3) Rationalization Candidates" id="e3c4ad8d-7732-463e-b082-30ce8cf92fc2" timestamp="2026-10-26T03:47:59.737Z" tests="0" failures="0" errors="0" time="0.006"/>
+</testsuites>

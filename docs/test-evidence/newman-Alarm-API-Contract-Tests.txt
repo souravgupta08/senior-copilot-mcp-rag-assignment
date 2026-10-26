@@ -1,0 +1,82 @@
+newman
+
+Alarm API Contract Tests (candidate)
+
+Root 01 - Health is public
+  GET http://localhost:8000/health [200 OK, 289B, 28ms]
+  Pass  200 + status ok
+
+Root 02 - Missing token gives 401 with error envelope
+  GET http://localhost:8000/assets/search?query=pump [401 Unauthorized, 307B, 5ms]
+  Pass  401
+  Pass  error.code = UNAUTHORIZED
+
+Root 03 - Wrong token gives 401
+  GET http://localhost:8000/assets/search?query=pump [401 Unauthorized, 281B, 5ms]
+  Pass  401
+
+Root 04 - Search asset echoes trace header
+  GET http://localhost:8000/assets/search?query=Boiler%20Feed%20Pump%20101&limit=5 [200 OK, 1.15kB, 5ms]
+  Pass  200
+  Pass  best match is BFP 101
+  Pass  result shape
+  Pass  trace echoed
+
+Root 05 - Asset metadata has related assets
+  GET http://localhost:8000/assets/AST-BFP-101/metadata [200 OK, 915B, 4ms]
+  Pass  related assets present
+  Pass  operating limits present
+
+Root 06 - Alarms pagination page 1
+  GET http://localhost:8000/alarms?asset_id=AST-BFP-101&page=1&page_size=10&sort_by=start_time&sort_order=desc [200 OK, 5.07kB, 4ms]
+  Pass  10 rows
+  Pass  pagination object
+  Pass  sorted desc
+
+Root 07 - Invalid page_size gives 422 validation error
+  GET http://localhost:8000/alarms?asset_id=AST-BFP-101&page_size=10000 [422 Unprocessable Content, 384B, 4ms]
+  Pass  422
+  Pass  VALIDATION_ERROR
+
+Root 08 - Unknown alarm gives 404
+  GET http://localhost:8000/alarms/ALM-999999 [404 Not Found, 283B, 4ms]
+  Pass  404
+  Pass  NOT_FOUND
+
+Root 09 - Correlation finds FCV-101 before BFP-101
+  POST http://localhost:8000/alarms/correlation [200 OK, 2.13kB, 7ms]
+  Pass  valve leads pump
+
+Root 10 - Reversed time range gives 400
+  POST http://localhost:8000/alarms/summary [400 Bad Request, 304B, 4ms]
+  Pass  400
+
+Root 11 - Priority score shape
+  POST http://localhost:8000/alarms/priority-score [200 OK, 690B, 4ms]
+  Pass  score 0-100
+  Pass  level P1-P4
+
+Root 12 - Recommendations include related assets
+  POST http://localhost:8000/recommendations/operator-actions [200 OK, 1.68kB, 3ms]
+  Pass  actions
+  Pass  related assets
+
+---------------------------------------------------------------
+|                         |        executed |          failed |
+--------------------------+-----------------+------------------
+|              iterations |               1 |               0 |
+--------------------------+-----------------+------------------
+|                requests |              12 |               0 |
+--------------------------+-----------------+------------------
+|            test-scripts |              12 |               0 |
+--------------------------+-----------------+------------------
+|      prerequest-scripts |               0 |               0 |
+--------------------------+-----------------+------------------
+|              assertions |              23 |               0 |
+---------------------------------------------------------------
+| total run duration: 312ms                                   |
+---------------------------------------------------------------
+| total data received: 10.92kB (approx)                       |
+---------------------------------------------------------------
+| average response time: 6ms [min: 3ms, max: 28ms, s.d.: 6ms] |
+---------------------------------------------------------------

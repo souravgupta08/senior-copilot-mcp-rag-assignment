@@ -1,0 +1,129 @@
+newman
+
+Alarm API Simulator - Chaining Flows
+
+Folder CHAIN-01 Asset -> Summary -> Rationalization
+Sub-folder 1) Search Boiler Feed Pump 101
+  GET http://localhost:8000/assets/search?query=Boiler%20Feed%20Pump%20101&limit=5 [200 OK, 1.13kB, 24ms]
+
+Sub-folder 2) Alarm Summary
+  POST http://localhost:8000/alarms/summary [200 OK, 888B, 7ms]
+
+Sub-folder 3) Rationalization Candidates
+  POST http://localhost:8000/alarms/rationalization-candidates [200 OK, 1.33kB, 4ms]
+
+Folder CHAIN-02 Flood -> Alarms -> Summary
+Sub-folder 1) Flood Analysis Unit 2
+  POST http://localhost:8000/alarms/flood-analysis [200 OK, 1.33kB, 4ms]
+
+Sub-folder 2) Get Alarms for Window
+  GET http://localhost:8000/alarms?unit=Unit%202&start_time=2026-05-08T11:00:00Z&end_time=2026-05-08T11:07:30Z&page=1&page_size=200 [200 OK, 6.81kB, 4ms]
+
+Sub-folder 3) Summary by Asset+Severity
+  POST http://localhost:8000/alarms/summary [200 OK, 1kB, 4ms]
+
+Folder CHAIN-03 Root Cause + Recommendations
+Sub-folder 1) Search Compressor Assets
+  GET http://localhost:8000/assets/search?query=compressor&limit=5 [200 OK, 1.15kB, 3ms]
+
+Sub-folder 2) Correlation
+  POST http://localhost:8000/alarms/correlation [200 OK, 2.18kB, 9ms]
+
+Sub-folder 3) Get Latest Alarm on Asset
+  GET http://localhost:8000/alarms?asset_id=AST-ACP-401&page=1&page_size=1&sort_by=start_time&sort_order=desc [200 OK, 757B, 5ms]
+
+Sub-folder 4) Asset Metadata
+  GET http://localhost:8000/assets/AST-ACP-401/metadata [200 OK, 669B, 3ms]
+
+Sub-folder 5) Operator Recommendations
+  POST http://localhost:8000/recommendations/operator-actions [200 OK, 1.1kB, 3ms]
+
+Folder CHAIN-04 Critical Density KPI -> Execute -> Summary
+Sub-folder 1) Generate Calculation
+  POST http://localhost:8000/calculation-code/generate [200 OK, 585B, 5ms]
+
+Sub-folder 2) Execute Calculation
+  POST http://localhost:8000/calculation-code/execute [200 OK, 456B, 3ms]
+
+Sub-folder 3) Summary by Asset
+  POST http://localhost:8000/alarms/summary [200 OK, 571B, 4ms]
+
+Folder CHAIN-05 Asset Active -> Recommendation
+Sub-folder 1) Search Boiler Feed Pump 102
+  GET http://localhost:8000/assets/search?query=Boiler%20Feed%20Pump%20102&limit=5 [200 OK, 1.11kB, 2ms]
+
+Sub-folder 2) Get Active Alarms
+  GET http://localhost:8000/alarms?asset_id=AST-BFP-102&status=active&page=1&page_size=20 [200 OK, 1.18kB, 3ms]
+
+Sub-folder 3) Recommendations
+  POST http://localhost:8000/recommendations/operator-actions [200 OK, 1.28kB, 4ms]
+
+Folder CHAIN-06 Stale + Severity Context
+Sub-folder 1) Rationalization Candidates
+  POST http://localhost:8000/alarms/rationalization-candidates [200 OK, 3.66kB, 4ms]
+
+Sub-folder 2) Summary by Severity
+  POST http://localhost:8000/alarms/summary [200 OK, 678B, 4ms]
+
+Folder CHAIN-07 Response Efficiency + Trend
+Sub-folder 1) Generate Efficiency Calc
+  POST http://localhost:8000/calculation-code/generate [200 OK, 605B, 3ms]
+
+Sub-folder 2) Execute Efficiency Calc
+  POST http://localhost:8000/calculation-code/execute [200 OK, 441B, 4ms]
+
+Sub-folder 3) Trends
+  POST http://localhost:8000/alarms/trends [200 OK, 4.05kB, 6ms]
+
+Folder CHAIN-08 Motor Correlation
+Sub-folder 1) Search Motor Assets Unit 5
+  GET http://localhost:8000/assets/search?query=motor&unit=Unit%205&limit=5 [200 OK, 642B, 3ms]
+
+Sub-folder 2) Correlation
+  POST http://localhost:8000/alarms/correlation [200 OK, 1.24kB, 4ms]
+
+Sub-folder 3) Summary Context
+  POST http://localhost:8000/alarms/summary [200 OK, 1.33kB, 4ms]
+
+Folder CHAIN-09 East Active -> Priority -> Recommendation
+Sub-folder 1) Get EastRefinery Active Alarms
+  GET http://localhost:8000/alarms?site=EastRefinery&status=active&page=1&page_size=50&sort_by=start_time&sort_order=desc [200 OK, 1.64kB, 4ms]
+
+Sub-folder 2) Alarm Detail
+  GET http://localhost:8000/alarms/ALM-001799 [200 OK, 659B, 3ms]
+
+Sub-folder 3) Priority Score
+  POST http://localhost:8000/alarms/priority-score [200 OK, 690B, 4ms]
+
+Sub-folder 4) Recommendations
+  POST http://localhost:8000/recommendations/operator-actions [200 OK, 1.44kB, 4ms]
+
+Folder CHAIN-10 Nuisance KPI -> Execute -> Candidates
+Sub-folder 1) Generate Nuisance Calculation
+  POST http://localhost:8000/calculation-code/generate [200 OK, 581B, 3ms]
+
+Sub-folder 2) Execute Nuisance Calculation
+  POST http://localhost:8000/calculation-code/execute [200 OK, 455B, 3ms]
+
+Sub-folder 3) Rationalization Candidates
+  POST http://localhost:8000/alarms/rationalization-candidates [200 OK, 1.32kB, 6ms]
+
+---------------------------------------------------------------
+|                         |        executed |          failed |
+--------------------------+-----------------+------------------
+|              iterations |               1 |               0 |
+--------------------------+-----------------+------------------
+|                requests |              32 |               0 |
+--------------------------+-----------------+------------------
+|            test-scripts |              11 |               0 |
+--------------------------+-----------------+------------------
+|      prerequest-scripts |               0 |               0 |
+--------------------------+-----------------+------------------
+|              assertions |               0 |               0 |
+---------------------------------------------------------------
+| total run duration: 533ms                                   |
+---------------------------------------------------------------
+| total data received: 36.32kB (approx)                       |
+---------------------------------------------------------------
+| average response time: 4ms [min: 2ms, max: 24ms, s.d.: 3ms] |
+---------------------------------------------------------------

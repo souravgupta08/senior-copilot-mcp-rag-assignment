@@ -1,0 +1,8 @@
+{
+  "documents": 9,
+  "chunks": 35,
+  "flagged_chunks": [
+    "VB-009#c01"
+  ],
+  "index_path": "/home/claude/repo/rag/index/alarm_docs_index.json"
+}

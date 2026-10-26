@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Alarm API Contract Tests (candidate)" tests="12" time="0.077">
+  <testsuite name="01 - Health is public" id="f7c1e838-ecd2-4f6f-8a5f-ee8242decec0" timestamp="2026-10-26T03:48:00.985Z" tests="1" failures="0" errors="0" time="0.028">
+    <testcase name="200 + status ok" time="0.028" classname="01HealthIsPublic"/>
+  </testsuite>
+  <testsuite name="02 - Missing token gives 401 with error envelope" id="d813c68d-c260-4201-8923-ee1fabae0c1d" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.005">
+    <testcase name="401" time="0.005" classname="02MissingTokenGives401WithErrorEnvelope"/>
+    <testcase name="error.code = UNAUTHORIZED" time="0.005" classname="02MissingTokenGives401WithErrorEnvelope"/>
+  </testsuite>
+  <testsuite name="03 - Wrong token gives 401" id="f47a6fdd-7b7b-4c5b-a24f-df52d255b7e3" timestamp="2026-10-26T03:48:00.985Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="401" time="0.005" classname="03WrongTokenGives401"/>
+  </testsuite>
+  <testsuite name="04 - Search asset echoes trace header" id="a8039acb-6df8-43cb-9678-6c864628b619" timestamp="2026-10-26T03:48:00.985Z" tests="4" failures="0" errors="0" time="0.005">
+    <testcase name="200" time="0.005" classname="04SearchAssetEchoesTraceHeader"/>
+    <testcase name="best match is BFP 101" time="0.005" classname="04SearchAssetEchoesTraceHeader"/>
+    <testcase name="result shape" time="0.005" classname="04SearchAssetEchoesTraceHeader"/>
+    <testcase name="trace echoed" time="0.005" classname="04SearchAssetEchoesTraceHeader"/>
+  </testsuite>
+  <testsuite name="05 - Asset metadata has related assets" id="0ec829fe-9032-4c42-abcf-4569fa6a9a2a" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="related assets present" time="0.004" classname="05AssetMetadataHasRelatedAssets"/>
+    <testcase name="operating limits present" time="0.004" classname="05AssetMetadataHasRelatedAssets"/>
+  </testsuite>
+  <testsuite name="06 - Alarms pagination page 1" id="45259fbb-67ba-4b51-a511-6baf5307aead" timestamp="2026-10-26T03:48:00.985Z" tests="3" failures="0" errors="0" time="0.004">
+    <testcase name="10 rows" time="0.004" classname="06AlarmsPaginationPage1"/>
+    <testcase name="pagination object" time="0.004" classname="06AlarmsPaginationPage1"/>
+    <testcase name="sorted desc" time="0.004" classname="06AlarmsPaginationPage1"/>
+  </testsuite>
+  <testsuite name="07 - Invalid page_size gives 422 validation error" id="d6e48ef3-4d8b-4ea1-92fe-05359254efe9" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="422" time="0.004" classname="07InvalidPageSizeGives422ValidationError"/>
+    <testcase name="VALIDATION_ERROR" time="0.004" classname="07InvalidPageSizeGives422ValidationError"/>
+  </testsuite>
+  <testsuite name="08 - Unknown alarm gives 404" id="fa81666a-ebe4-4e34-9f79-0fcb4e22cbbb" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="404" time="0.004" classname="08UnknownAlarmGives404"/>
+    <testcase name="NOT_FOUND" time="0.004" classname="08UnknownAlarmGives404"/>
+  </testsuite>
+  <testsuite name="09 - Correlation finds FCV-101 before BFP-101" id="7ff5100f-cdef-4113-a247-b8e1e4d6819b" timestamp="2026-10-26T03:48:00.985Z" tests="1" failures="0" errors="0" time="0.007">
+    <testcase name="valve leads pump" time="0.007" classname="09CorrelationFindsFcv101BeforeBfp101"/>
+  </testsuite>
+  <testsuite name="10 - Reversed time range gives 400" id="b57d53e7-bac0-49ee-a416-f3721296758d" timestamp="2026-10-26T03:48:00.985Z" tests="1" failures="0" errors="0" time="0.004">
+    <testcase name="400" time="0.004" classname="10ReversedTimeRangeGives400"/>
+  </testsuite>
+  <testsuite name="11 - Priority score shape" id="61a5dd5f-4cff-4c45-a047-9f0e76171fd0" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.004">
+    <testcase name="score 0-100" time="0.004" classname="11PriorityScoreShape"/>
+    <testcase name="level P1-P4" time="0.004" classname="11PriorityScoreShape"/>
+  </testsuite>
+  <testsuite name="12 - Recommendations include related assets" id="7b49bd55-e509-4f8b-8461-99198c914572" timestamp="2026-10-26T03:48:00.985Z" tests="2" failures="0" errors="0" time="0.003">
+    <testcase name="actions" time="0.003" classname="12RecommendationsIncludeRelatedAssets"/>
+    <testcase name="related assets" time="0.003" classname="12RecommendationsIncludeRelatedAssets"/>
+  </testsuite>
+</testsuites>

@@ -1,0 +1,128 @@
+{
+  "info": {
+    "name": "Alarm API Contract Tests (candidate)",
+    "description": "Extra assertions written for this submission: response shapes, auth failures, trace headers, pagination and error format. Run after the three reference collections.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {"type": "bearer", "bearer": [{"key": "token", "value": "{{auth_token}}", "type": "string"}]},
+  "variable": [
+    {"key": "baseUrl", "value": "http://localhost:8000"},
+    {"key": "auth_token", "value": "demo-token"},
+    {"key": "trace_id", "value": "trace-contract-001"},
+    {"key": "asset_id", "value": ""},
+    {"key": "alarm_id", "value": ""},
+    {"key": "start_time", "value": "2026-05-01T00:00:00Z"},
+    {"key": "end_time", "value": "2026-07-01T00:00:00Z"}
+  ],
+  "item": [
+    {
+      "name": "01 - Health is public",
+      "request": {"auth": {"type": "noauth"}, "method": "GET", "url": "{{baseUrl}}/health"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "pm.test('200 + status ok', () => { pm.response.to.have.status(200); pm.expect(pm.response.json().status).to.eql('ok'); });"
+      ]}}]
+    },
+    {
+      "name": "02 - Missing token gives 401 with error envelope",
+      "request": {"auth": {"type": "noauth"}, "method": "GET", "url": "{{baseUrl}}/assets/search?query=pump"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "pm.test('401', () => pm.response.to.have.status(401));",
+        "pm.test('error.code = UNAUTHORIZED', () => pm.expect(pm.response.json().error.code).to.eql('UNAUTHORIZED'));"
+      ]}}]
+    },
+    {
+      "name": "03 - Wrong token gives 401",
+      "request": {"auth": {"type": "bearer", "bearer": [{"key": "token", "value": "wrong-token", "type": "string"}]},
+                  "method": "GET", "url": "{{baseUrl}}/assets/search?query=pump"},
+      "event": [{"listen": "test", "script": {"exec": ["pm.test('401', () => pm.response.to.have.status(401));"]}}]
+    },
+    {
+      "name": "04 - Search asset echoes trace header",
+      "request": {"method": "GET", "header": [{"key": "trace_id", "value": "{{trace_id}}"}, {"key": "x-client-id", "value": "postman-contract"}],
+                  "url": "{{baseUrl}}/assets/search?query=Boiler%20Feed%20Pump%20101&limit=5"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const body = pm.response.json();",
+        "pm.test('200', () => pm.response.to.have.status(200));",
+        "pm.test('best match is BFP 101', () => pm.expect(body.results[0].asset_name).to.eql('Boiler Feed Pump 101'));",
+        "pm.test('result shape', () => pm.expect(body.results[0]).to.have.keys('asset_id','asset_name','asset_type','site','unit','criticality','match_score'));",
+        "pm.test('trace echoed', () => pm.expect(pm.response.headers.get('trace_id')).to.eql(pm.collectionVariables.get('trace_id')));",
+        "pm.collectionVariables.set('asset_id', body.results[0].asset_id);"
+      ]}}]
+    },
+    {
+      "name": "05 - Asset metadata has related assets",
+      "request": {"method": "GET", "url": "{{baseUrl}}/assets/{{asset_id}}/metadata"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const body = pm.response.json();",
+        "pm.test('related assets present', () => pm.expect(body.related_assets.length).to.be.above(0));",
+        "pm.test('operating limits present', () => pm.expect(body.operating_limits).to.be.an('object'));"
+      ]}}]
+    },
+    {
+      "name": "06 - Alarms pagination page 1",
+      "request": {"method": "GET", "url": "{{baseUrl}}/alarms?asset_id={{asset_id}}&page=1&page_size=10&sort_by=start_time&sort_order=desc"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const body = pm.response.json();",
+        "pm.test('10 rows', () => pm.expect(body.data.length).to.eql(10));",
+        "pm.test('pagination object', () => pm.expect(body.pagination).to.include.keys('page','page_size','total','total_pages','has_next'));",
+        "pm.test('sorted desc', () => pm.expect(body.data[0].start_time >= body.data[1].start_time).to.be.true);",
+        "pm.collectionVariables.set('alarm_id', body.data[0].alarm_id);"
+      ]}}]
+    },
+    {
+      "name": "07 - Invalid page_size gives 422 validation error",
+      "request": {"method": "GET", "url": "{{baseUrl}}/alarms?asset_id={{asset_id}}&page_size=10000"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "pm.test('422', () => pm.response.to.have.status(422));",
+        "pm.test('VALIDATION_ERROR', () => pm.expect(pm.response.json().error.code).to.eql('VALIDATION_ERROR'));"
+      ]}}]
+    },
+    {
+      "name": "08 - Unknown alarm gives 404",
+      "request": {"method": "GET", "url": "{{baseUrl}}/alarms/ALM-999999"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "pm.test('404', () => pm.response.to.have.status(404));",
+        "pm.test('NOT_FOUND', () => pm.expect(pm.response.json().error.code).to.eql('NOT_FOUND'));"
+      ]}}]
+    },
+    {
+      "name": "09 - Correlation finds FCV-101 before BFP-101",
+      "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+                  "body": {"mode": "raw", "raw": "{\n  \"asset_ids\": [\"{{asset_id}}\"],\n  \"time_range\": {\"start_time\": \"{{start_time}}\", \"end_time\": \"{{end_time}}\"},\n  \"correlation_method\": \"cooccurrence\",\n  \"lag_window_minutes\": 15,\n  \"severity_threshold\": \"medium\",\n  \"min_support\": 2\n}"},
+                  "url": "{{baseUrl}}/alarms/correlation"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const top = pm.response.json().correlated_pairs[0];",
+        "pm.test('valve leads pump', () => { pm.expect(top.leading_alarm.asset_id).to.eql('AST-FCV-101'); pm.expect(top.following_alarm.asset_id).to.eql('AST-BFP-101'); });"
+      ]}}]
+    },
+    {
+      "name": "10 - Reversed time range gives 400",
+      "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+                  "body": {"mode": "raw", "raw": "{\"time_range\": {\"start_time\": \"{{end_time}}\", \"end_time\": \"{{start_time}}\"}}"},
+                  "url": "{{baseUrl}}/alarms/summary"},
+      "event": [{"listen": "test", "script": {"exec": ["pm.test('400', () => pm.response.to.have.status(400));"]}}]
+    },
+    {
+      "name": "11 - Priority score shape",
+      "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+                  "body": {"mode": "raw", "raw": "{\"alarm_id\": \"{{alarm_id}}\"}"},
+                  "url": "{{baseUrl}}/alarms/priority-score"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const body = pm.response.json();",
+        "pm.test('score 0-100', () => pm.expect(body.priority_score).to.be.within(0, 100));",
+        "pm.test('level P1-P4', () => pm.expect(['P1','P2','P3','P4']).to.include(body.priority_level));"
+      ]}}]
+    },
+    {
+      "name": "12 - Recommendations include related assets",
+      "request": {"method": "POST", "header": [{"key": "Content-Type", "value": "application/json"}],
+                  "body": {"mode": "raw", "raw": "{\"alarm_id\": \"{{alarm_id}}\", \"include_related\": true}"},
+                  "url": "{{baseUrl}}/recommendations/operator-actions"},
+      "event": [{"listen": "test", "script": {"exec": [
+        "const body = pm.response.json();",
+        "pm.test('actions', () => pm.expect(body.recommended_actions.length).to.be.above(0));",
+        "pm.test('related assets', () => pm.expect(body.related_assets_to_check.length).to.be.above(0));"
+      ]}}]
+    }
+  ]
+}

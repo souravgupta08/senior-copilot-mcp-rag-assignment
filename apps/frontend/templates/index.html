@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarm Investigation Copilot</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+
+<body>
+
+    <header class="top-bar">
+        <div>
+            <div class="badge">MCP + RAG Copilot</div>
+            <h1>Alarm Investigation Copilot</h1>
+            <p class="subtitle">Investigate alarms with live Alarm API data (through MCP) and your operating procedures (through RAG).</p>
+        </div>
+        <div class="top-actions">
+            <span id="statusPill" class="status-pill"><span class="status-dot"></span>Checking...</span>
+            <button class="ghost-btn" onclick="toggleTools()">MCP tools</button>
+            <button class="ghost-btn" onclick="newConversation()">New conversation</button>
+        </div>
+    </header>
+
+    <!-- Tool discovery view -->
+    <section id="toolsPanel" class="card hidden">
+        <div class="card-title">MCP tool discovery <span class="muted">(tools/list from the Alarm Management MCP server)</span></div>
+        <div id="toolsList" class="muted">Loading tools...</div>
+    </section>
+
+    <main class="layout">
+
+        <!-- ===== Left: chat ===== -->
+        <section class="card chat-card">
+            <div class="card-title">Chat <span id="threadInfo" class="muted"></span></div>
+
+            <div id="chatLog" class="chat-log">
+                <div class="empty-state">
+                    Ask about an asset or site, for example:<br>
+                    <em>Investigate recurring high-severity alarms for Boiler Feed Pump 101 over the last 90 days.</em>
+                </div>
+            </div>
+
+            <div class="quick-prompts">
+                <button onclick="setPrompt('Investigate recurring high-severity alarms for Boiler Feed Pump 101 over the last 90 days, identify likely contributing factors, retrieve the relevant operating procedure, and provide recommended actions with source evidence.')">Acceptance scenario</button>
+                <button onclick="setPrompt('Show active critical alarms for Boiler Feed Pump 102 and recommend immediate actions.')">Active alarms BFP 102</button>
+                <button onclick="setPrompt('Why are compressor discharge pressure alarms repeatedly occurring?')">Compressor causes</button>
+                <button onclick="setPrompt('Which alarm has the highest priority in EastRefinery, and why?')">Highest priority</button>
+                <button onclick="setPrompt('What related assets should be inspected for this motor trip alarm?')">Motor trip</button>
+                <button onclick="setPrompt('Are the API recommendations consistent with the maintenance manual?')">Consistency check</button>
+            </div>
+
+            <div class="input-area">
+                <textarea id="userInput" maxlength="2000"
+                    placeholder="Ask about an alarm, asset or site... (Ctrl+Enter to send)"></textarea>
+                <button id="sendBtn" onclick="sendMessage()">
+                    <span id="btnText">Investigate</span>
+                    <span id="btnLoader" class="loader hidden"></span>
+                </button>
+            </div>
+            <div id="errorBox" class="error-box hidden"></div>
+        </section>
+
+        <!-- ===== Right: evidence ===== -->
+        <section class="evidence">
+
+            <div id="evidenceEmpty" class="card empty-state">
+                Evidence will appear here: alarm summary, likely causes, recommendations,
+                document citations and the MCP execution trace.
+            </div>
+
+            <div id="evidence" class="hidden">
+
+                <div class="card">
+                    <div class="card-title">Alarm summary
+                        <span class="actions">
+                            <button class="ghost-btn small" onclick="exportJson()">Export JSON</button>
+                            <button class="ghost-btn small" onclick="exportMarkdown()">Export Markdown</button>
+                        </span>
+                    </div>
+                    <div id="kpis" class="kpis"></div>
+                    <div id="focusAlarm"></div>
+                    <div class="table-wrap"><table id="alarmTable"></table></div>
+                </div>
+
+                <div id="warningsCard" class="card warning-card hidden">
+                    <div class="card-title">Notes, errors and retries</div>
+                    <ul id="warnings"></ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Likely causes</div>
+                    <ul id="causes" class="plain-list"></ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Recommended actions <span class="muted">(API) checked against documents</span></div>
+                    <ul id="recommendations" class="plain-list"></ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Related assets to inspect</div>
+                    <ul id="relatedAssets" class="plain-list"></ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">Document citations <span id="retrievalInfo" class="muted"></span></div>
+                    <div id="citations"></div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">MCP execution trace <span id="traceInfo" class="muted"></span></div>
+                    <div id="trace"></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>Built with FastAPI, LangGraph, MCP (FastMCP + langchain-mcp-adapters) and scikit-learn TF-IDF retrieval</footer>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>

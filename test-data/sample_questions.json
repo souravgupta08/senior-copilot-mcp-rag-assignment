@@ -1,0 +1,17 @@
+{
+  "acceptance_scenario": "Investigate recurring high-severity alarms for Boiler Feed Pump 101 over the last 90 days, identify likely contributing factors, retrieve the relevant operating procedure, and provide recommended actions with source evidence.",
+  "use_case_examples": [
+    "Show active critical alarms for Boiler Feed Pump 102 and recommend immediate actions.",
+    "Why are compressor discharge pressure alarms repeatedly occurring?",
+    "Which alarm has the highest priority in EastRefinery, and why?",
+    "What related assets should be inspected for this motor trip alarm?",
+    "Which operating procedure applies to this alarm?",
+    "Are the API recommendations consistent with the maintenance manual?"
+  ],
+  "edge_cases": [
+    "hello there",
+    "Investigate Pump XYZ 999",
+    "Investigate Gas Compressor K-501 for the past 2 weeks",
+    "What does the uploaded copy note in the pump pressure switch bulletin say for Boiler Feed Pump 101?"
+  ]
+}

@@ -1,0 +1,35 @@
+[project]
+name = "senior-copilot-mcp-rag-assignment"
+version = "1.0.0"
+description = "Alarm Investigation and Procedure Guidance Copilot (MCP + RAG)"
+requires-python = ">=3.11"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["tests", "rag/tests"]
+filterwarnings = ["ignore::DeprecationWarning", "ignore::UserWarning"]
+
+[tool.coverage.run]
+source = ["apps", "connectors", "rag", "mcp-servers"]
+omit = ["*/tests/*"]
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
+exclude = [".venv"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "S"]
+ignore = [
+    "B006",  # list defaults in FastMCP tool signatures are copied by pydantic
+    "B008",
+    "S101",  # assert is fine in tests
+    "S104",  # binding 0.0.0.0 inside containers is intended
+    "S311",  # random is used for synthetic data only
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S", "B"]
+"rag/tests/*" = ["S", "B"]
+"conftest.py" = ["S"]

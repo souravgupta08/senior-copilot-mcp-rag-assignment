@@ -1,0 +1,33 @@
+........................................................................ [ 58%]
+....................................................                     [100%]
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.13.17-final-0 _______________
+
+Name                                               Stmts   Miss  Cover
+----------------------------------------------------------------------
+apps/__init__.py                                       0      0   100%
+apps/alarm_simulator/__init__.py                       0      0   100%
+apps/alarm_simulator/analytics.py                    295     25    92%
+apps/alarm_simulator/data.py                          98      2    98%
+apps/alarm_simulator/main.py                         233     12    95%
+apps/backend/__init__.py                               0      0   100%
+apps/backend/answer.py                               164     10    94%
+apps/backend/app.py                                   56     11    80%
+apps/backend/mcp_client.py                           103      7    93%
+apps/backend/planner.py                              104      7    93%
+apps/backend/workflow.py                             326     26    92%
+connectors/__init__.py                                 0      0   100%
+connectors/alarm_api_client.py                       110      6    95%
+mcp-servers/alarm-management/alarm_mcp_server.py     114     19    83%
+mcp-servers/alarm-management/alarm_schemas.py        123      0   100%
+rag/__init__.py                                        0      0   100%
+rag/ingestion/__init__.py                              0      0   100%
+rag/ingestion/ingest.py                              110      6    95%
+rag/retrieval/__init__.py                              0      0   100%
+rag/retrieval/retriever.py                            77      2    97%
+rag/safety.py                                         16      0   100%
+----------------------------------------------------------------------
+TOTAL                                               1929    133    93%
+Coverage HTML written to dir htmlcov
+Coverage XML written to file coverage.xml
+124 passed in 19.26s

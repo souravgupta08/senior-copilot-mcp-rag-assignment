@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="Alarm API Simulator E2E" tests="15" time="0.096">
+  <testsuite name="00 - Health" id="3a5fd1ec-c258-4b59-aa08-cb20f92caf59" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.026"/>
+  <testsuite name="01 - Search Asset (sets asset_id)" id="08fc11d3-abdb-4610-9bdf-82f5bc78575e" timestamp="2026-10-26T03:47:57.823Z" tests="1" failures="0" errors="0" time="0.006">
+    <testcase name="Status 200" time="0.006" classname="01SearchAssetSetsAssetId"/>
+  </testsuite>
+  <testsuite name="02 - Asset Metadata" id="03c07685-5d74-4be2-b1ef-0d79368b9a48" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.005"/>
+  <testsuite name="03 - Get Alarms (sets alarm_id)" id="89d415c2-4fe9-4c20-9f35-a8cfc36cf82c" timestamp="2026-10-26T03:47:57.823Z" tests="1" failures="0" errors="0" time="0.005">
+    <testcase name="Status 200" time="0.005" classname="03GetAlarmsSetsAlarmId"/>
+  </testsuite>
+  <testsuite name="04 - Get Alarm by ID" id="55274024-205b-480a-b264-7e9d0b984595" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.003"/>
+  <testsuite name="05 - Alarm Summary (trace headers)" id="b109892a-d427-42b1-a32f-a068fe0b8640" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.007"/>
+  <testsuite name="06 - Alarm Trends" id="fc7f9cba-2fa9-4d39-8e7e-eb7538fa7c9f" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.008"/>
+  <testsuite name="07 - Alarm Correlation (trace headers)" id="5853fe2e-28c9-4cff-8b39-7f595ec3dfe3" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.006"/>
+  <testsuite name="08 - Flood Analysis" id="cc9db14a-3612-478d-bda0-cbad2a3feabf" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.006"/>
+  <testsuite name="09 - Rationalization Candidates" id="de20b97e-3a99-4c33-8abb-31f83465d127" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="10 - Priority Score" id="1daf3009-af36-4edf-bf78-82c3748c9b7c" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="11 - Operator Recommendations (trace headers)" id="6ceb1917-b953-4ede-81d0-f7f831a89ee9" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.005"/>
+  <testsuite name="12 - Generate Calculation Code (sets calculation_id)" id="3a3394b3-86a6-4213-abf1-58525b8c549a" timestamp="2026-10-26T03:47:57.823Z" tests="1" failures="0" errors="0" time="0.003">
+    <testcase name="Status 200" time="0.003" classname="12GenerateCalculationCodeSetsCalculationId"/>
+  </testsuite>
+  <testsuite name="13 - Execute Calculation Code (trace headers)" id="a39ab9e9-e1ce-4019-8034-9ab7edf07dba" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.004"/>
+  <testsuite name="14 - KPI Definitions" id="03d43deb-6ab1-4bb1-b314-8ae2b2f27fd0" timestamp="2026-10-26T03:47:57.823Z" tests="0" failures="0" errors="0" time="0.004"/>
+</testsuites>

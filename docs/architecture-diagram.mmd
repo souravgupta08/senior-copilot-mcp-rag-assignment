@@ -1,0 +1,49 @@
+flowchart LR
+    U([Operator / Engineer]) --> GUI
+
+    subgraph COPILOT["Copilot container (apps/backend + apps/frontend)"]
+        GUI["GUI<br/>FastAPI + Jinja2 + JS<br/>chat, summary, citations, trace"]
+        API["/api/chat<br/>FastAPI endpoint"]
+        ORCH["Copilot orchestration<br/>LangGraph StateGraph<br/>planner -> nodes -> answer"]
+        MEM[("Conversation memory<br/>MemorySaver per thread_id")]
+        MCPC["MCP client / tool registry<br/>langchain-mcp-adapters<br/>discovery, JSON-schema check,<br/>timeouts, trace recording"]
+        RET["Retrieval service<br/>TF-IDF + keyword hybrid,<br/>filters, confidence, injection guard"]
+        ANS["Evidence combiner<br/>measured vs documented,<br/>conflict check, citations"]
+        LLM["LLM (optional)<br/>Groq llama-3.3-70b<br/>or template answer"]
+        GUI --> API --> ORCH
+        ORCH <--> MEM
+        ORCH --> MCPC
+        ORCH --> RET
+        ORCH --> ANS --> LLM
+    end
+
+    subgraph MCPS["Alarm Management MCP server (mcp-servers/alarm-management)"]
+        TOOLS["9 typed MCP tools<br/>FastMCP, Pydantic in/out schemas"]
+        CONN["Connector (connectors/)<br/>httpx: bearer auth, retries,<br/>timeouts, error mapping, trace headers"]
+        TOOLS --> CONN
+    end
+
+    subgraph SRC["Alarm Management API simulator (apps/alarm_simulator)"]
+        SIM["FastAPI REST API<br/>built from Postman collections<br/>assets, alarms, analytics"]
+        DATA[("Synthetic plant data<br/>18 assets, ~1,800 alarms")]
+        SIM --> DATA
+    end
+
+    subgraph RAGP["RAG pipeline (rag/)"]
+        DOCS[("Document store<br/>rag/documents/*.md<br/>SOPs, manuals, guides, safety")]
+        ING["Ingestion<br/>front-matter metadata,<br/>section chunking, injection flag"]
+        IDX[("Retrieval index<br/>rag/index/*.json")]
+        DOCS --> ING --> IDX
+    end
+
+    MCPC == "MCP (stdio or streamable HTTP)<br/>tools/list, tools/call + trace_id" ==> TOOLS
+    CONN == "HTTPS REST + Bearer token<br/>trace_id, x-client-id headers" ==> SIM
+    RET --> IDX
+
+    OBS["Observability<br/>JSON logs: request_id, trace_id,<br/>tool, duration, attempts, retrieval scores"]
+    ORCH -.-> OBS
+    TOOLS -.-> OBS
+    SIM -.-> OBS
+
+    classDef auth stroke:#ef4444,stroke-width:2px,stroke-dasharray:4 3
+    class CONN,SIM auth
