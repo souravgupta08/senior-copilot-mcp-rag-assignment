@@ -1,9 +1,4 @@
-"""
-Business logic of the Alarm Management API simulator.
-
-Every function here takes plain Python data and returns plain dicts,
-so it is easy to unit test without starting a web server.
-"""
+"""Simulator business logic. Pure functions, no web framework."""
 
 import uuid
 from collections import Counter, defaultdict
@@ -491,9 +486,8 @@ def priority_score(alarm, all_alarms):
 # =========================
 # Operator recommendations
 # =========================
-# NOTE: One recommendation (pump restart) intentionally disagrees with the
-# operating procedure in the document corpus, so the copilot can show how it
-# detects conflicting evidence.
+# the pump "reset the trip and restart" rule contradicts SOP-BFP-001 on purpose
+# (used to test the API-vs-procedure conflict check)
 
 RECOMMENDATION_RULES = {
     "High Discharge Pressure": [

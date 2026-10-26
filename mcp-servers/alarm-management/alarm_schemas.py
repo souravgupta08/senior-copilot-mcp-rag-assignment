@@ -1,9 +1,4 @@
-"""
-Typed output schemas for the Alarm Management MCP tools.
-
-FastMCP turns these Pydantic models into JSON "outputSchema" entries, so a
-client can see exactly what each tool returns before calling it.
-"""
+"""Output models for the MCP tools."""
 
 from typing import Any
 

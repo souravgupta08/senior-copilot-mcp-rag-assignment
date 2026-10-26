@@ -1,13 +1,4 @@
-"""
-MCP client for the copilot.
-
-The copilot NEVER calls the Alarm API directly. It talks to our
-Alarm Management MCP server, which then calls the API.
-
-Two ways to reach the MCP server:
-- MCP_SERVER_URL set     -> streamable HTTP (used in docker compose)
-- MCP_SERVER_URL empty   -> stdio: we start the server script as a child process (local dev / tests)
-"""
+"""MCP client used by the copilot. MCP_SERVER_URL set -> HTTP, otherwise stdio."""
 
 import asyncio
 import json
@@ -193,12 +184,7 @@ class McpToolbox:
 
 @asynccontextmanager
 async def open_toolbox(trace_id: str):
-    """
-    Usage:
-        async with open_toolbox("trace-123") as toolbox:
-            await toolbox.discover()
-            data = await toolbox.call("search_assets", {"query": "Boiler Feed Pump 101"})
-    """
+    """One MCP session per request, wrapped in a McpToolbox."""
     client = MultiServerMCPClient(build_server_config())
     async with client.session(SERVER_NAME) as session:
         yield McpToolbox(session, trace_id)

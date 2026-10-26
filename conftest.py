@@ -1,10 +1,4 @@
-"""
-Shared pytest setup.
-
-- puts the repo root and the MCP server folder on the import path
-- sets safe test environment variables (no real LLM, test token)
-- starts the Alarm API simulator once per test session on a free port
-"""
+"""Test setup: env vars, import paths and a simulator running on a free port."""
 
 import os
 import socket

@@ -1,15 +1,6 @@
-"""
-RAG ingestion pipeline.
+"""Load docs, chunk by section, build the JSON index.
 
-Steps:
-  1. read every .md / .txt file in DOCUMENT_PATH
-  2. pull metadata from the "front matter" block at the top (doc_id, title, doc_type ...)
-  3. split the text into chunks (one chunk per section, long sections are split again)
-  4. flag chunks that contain prompt-injection text
-  5. build a TF-IDF index (our "embedding") and save it to disk
-
-Run:
-    python -m rag.ingestion.ingest
+python -m rag.ingestion.ingest
 """
 
 import hashlib

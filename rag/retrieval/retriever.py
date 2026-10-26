@@ -1,10 +1,4 @@
-"""
-Document retrieval with filters, scores, citations and a confidence check.
-
-Hybrid score = 0.7 * TF-IDF cosine similarity + 0.3 * keyword overlap
-  - TF-IDF finds chunks that use similar words overall
-  - keyword overlap rewards chunks that contain the exact important words
-"""
+"""Hybrid retrieval: 0.7 * tf-idf cosine + 0.3 * keyword overlap."""
 
 import json
 import os
@@ -93,7 +87,7 @@ class DocumentRetriever:
         {
           "query": ..., "filters": ...,
           "status": "ok" | "low_confidence" | "no_results",
-          "results": [ {chunk fields..., "score": 0.43, "citation": "[SOP-BFP-001 §...]"} ]
+          "results": [ {chunk fields..., "score": 0.43, "citation": "[SOP-BFP-001 section ...]"} ]
         }
         """
         filters = {"doc_types": doc_types, "equipment_types": equipment_types}
@@ -163,8 +157,5 @@ class DocumentRetriever:
 
 
 def format_citation(chunk: dict) -> str:
-    """
-    Example:
-        SOP-BFP-001 - Boiler Feed Pump Operating Procedure, section "High Discharge Pressure Alarm Response"
-    """
+    """SOP-BFP-001 - Boiler Feed Pump Operating Procedure, section "..." """
     return f'{chunk["doc_id"]} - {chunk["title"]}, section "{chunk["section"]}"'

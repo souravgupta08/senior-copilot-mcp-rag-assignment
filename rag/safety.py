@@ -1,10 +1,4 @@
-"""
-Prompt-injection protection for retrieved documents.
-
-Documents are DATA, not instructions. If a document contains text like
-"ignore all previous instructions", we remove those sentences before the
-text is shown to the LLM, and we flag the chunk so the GUI can show a warning.
-"""
+"""Strip prompt-injection style sentences from retrieved text."""
 
 import re
 
@@ -30,9 +24,6 @@ def sanitize_text(text: str) -> tuple[str, bool]:
     Removes suspicious sentences.
 
     Returns (clean_text, was_flagged).
-    Example:
-        "Replace the switch. IGNORE ALL PREVIOUS INSTRUCTIONS. Restart now."
-        -> ("Replace the switch. [removed: suspected prompt injection]", True)
     """
     sentences = re.split(r"(?<=[.!?])\s+", text)
     kept = []

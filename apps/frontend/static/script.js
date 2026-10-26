@@ -24,8 +24,7 @@ function inlineMarkdown(text) {
 }
 
 function renderMarkdown(markdown) {
-    // Tiny markdown renderer (headings, bold, italics, lists).
-    // We escape FIRST, so text from the LLM or documents can never inject HTML or scripts.
+    // minimal markdown (headings, bold, italic, lists); escape first so no HTML gets through
     const lines = escapeHtml(markdown).split("\n");
     let html = "";
     let inList = false;

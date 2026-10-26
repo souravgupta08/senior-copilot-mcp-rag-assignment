@@ -1,11 +1,6 @@
-"""
-Alarm Management API simulator.
+"""Alarm Management API simulator (contract: postman/ collections).
 
-This is the "source system" our MCP server talks to. It was built from the
-Postman collections in /postman (they are the API contract).
-
-Run it:
-    uvicorn apps.alarm_simulator.main:app --port 8000
+uvicorn apps.alarm_simulator.main:app --port 8000
 """
 
 import asyncio

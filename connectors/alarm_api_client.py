@@ -1,16 +1,4 @@
-"""
-HTTP connector for the Alarm Management API.
-
-Only the MCP server uses this file. The copilot never calls the API
-directly - it always goes through MCP tools.
-
-What this connector takes care of:
-- adds the Bearer token (never logs it)
-- adds trace headers (trace_id, x-client-id, x-metadata-tag)
-- timeout on every request
-- retries with back-off for temporary errors (timeouts, connection errors, 429, 5xx; honours Retry-After)
-- turns HTTP errors into a small, readable AlarmApiError
-"""
+"""HTTP client for the Alarm API (auth, trace headers, timeout, retries, error mapping)."""
 
 import asyncio
 import os

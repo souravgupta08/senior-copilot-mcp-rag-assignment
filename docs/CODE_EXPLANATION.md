@@ -1,6 +1,6 @@
 # Alarm Copilot - Code Explained Simply
 
-_Plain-language walkthrough of every part of the code, with examples._
+Walkthrough of every part of the code, with examples.
 
 ## 1. The big picture
 
@@ -8,7 +8,7 @@ The project is a chat assistant that helps a plant engineer answer one question:
 
 **Everyday analogy - a hospital.** A patient (a pump) has symptoms (alarms). A good doctor does two things: looks at the test reports (lab data = the Alarm API) and checks the medical handbook (the procedures = our documents). Then the doctor writes a diagnosis that says *"your blood test shows X \[report 3\], and the handbook says do Y \[page 12\]"*. Our copilot works the same way, and it always says where each statement came from.
 
-![Request path: MCP for data, RAG for documents](screenshots/00-request-path.png)
+Request path: `GUI -> Copilot (LangGraph) -> MCP server -> Alarm API` for data, and `Copilot -> RAG retriever -> documents` for procedures. Both results come back to the copilot, which writes one answer with citations.
 
 A question goes left to right through MCP to the API, and down to the documents; both results come back to the copilot, which writes one answer with citations.
 
@@ -22,7 +22,7 @@ The project is built from five parts:
 | Copilot (LangGraph) | The doctor who decides which tests to order and writes the diagnosis | `apps/backend/` |
 | GUI | The screen the patient sees | `apps/frontend/` |
 
-**How this maps to your TripMate project.** You already know this pattern:
+**Comparison with TripMate** (my earlier travel-planner project that uses the same pattern):
 
 | TripMate | This project |
 | --- | --- |
@@ -48,10 +48,10 @@ The project is in `Downloads/senior-copilot-mcp-rag-assignment`. The folders fol
 | `apps/backend/` | `app.py` (web server), `workflow.py` (LangGraph), `planner.py`, `mcp_client.py`, `answer.py` |
 | `apps/frontend/` | `templates/index.html`, `static/script.js`, `static/style.css` |
 | `tests/`, `rag/tests/`, `conftest.py` | 124 automated tests |
-| `postman/` | The 3 Postman collections from the package + 1 I wrote |
-| `docs/` | Architecture, tool catalog, RAG design, screenshots, test evidence |
+| `postman/` | The 3 reference Postman collections + 1 contract-test collection |
+| `docs/` | Architecture, tool catalog, RAG design, test evidence |
 
-**Run it on your Mac (no Docker):**
+**Run it locally (no Docker):**
 
 ```
 cd ~/Downloads/senior-copilot-mcp-rag-assignment
@@ -65,7 +65,7 @@ uvicorn apps.alarm_simulator.main:app --port 8000
 uvicorn apps.backend.app:app --port 8080
 ```
 
-Then open `http://127.0.0.1:8080` and click **Acceptance scenario**. You do not start the MCP server yourself here: the copilot starts it in the background (same as TripMate's weather server, over "stdio").
+Then open `http://127.0.0.1:8080` and click **Acceptance scenario**. You do not start the MCP server yourself here: the copilot starts it in the background (over "stdio").
 
 **With Docker:** `docker compose up --build` starts all three services (API on 8000, MCP server on 9000, GUI on 8080). Python 3.11 or newer is needed for the local option.
 
@@ -404,7 +404,7 @@ The copilot is built to **answer with what it has** and say clearly what is miss
 
 `httpx.MockTransport` (used in the connector tests) is a fake network: the test decides what the "API" answers, so timeouts and 503s can be tested without a real server.
 
-**Postman.** You asked for Postman testing. I used **newman**, Postman's command-line runner - it runs the same collection files the Postman app runs. Results: the 3 provided collections (15 + 15 + 32 requests) and my extra contract collection (12 requests, 23 assertions: auth, trace header echo, pagination, 404/422/400 errors, response shapes) all pass. Run them with `bash scripts/run_postman.sh`, or in the Postman app: import the files in `postman/` plus `local.postman_environment.json` and click Run.
+**Postman.** The collections are run with **newman**, Postman's command-line runner (same collection files the Postman app uses). The 3 reference collections (15 + 15 + 32 requests) and the contract collection (12 requests, 23 assertions: auth, trace header echo, pagination, 404/422/400 errors, response shapes) all pass. Run them with `bash scripts/run_postman.sh`, or import `postman/` plus `local.postman_environment.json` into the Postman app and click Run.
 
 **Packaging.**
 
@@ -414,11 +414,7 @@ The copilot is built to **answer with what it has** and say clearly what is miss
 - `Makefile` - shortcuts: `make test`, `make lint`, `make up`, `make postman`.
 - `.github/workflows/ci.yml` - on every push GitHub runs formatting + lint (ruff), unit, RAG, MCP and e2e tests with coverage, a dependency audit, the Postman collections, and a Docker build + smoke test.
 
-One honest note: my build environment could not download the Docker base image, so `docker compose up --build` was not run there. The same three services were run as separate processes over HTTP and tested end to end. Run `docker compose up --build` once on your Mac before a demo.
-
-**Git.** The folder is a git repository with a `main` branch and a `feature/alarm-investigation-copilot` branch holding 10 meaningful commits (`feat:`, `test:`, `build:`, `docs:`). Push both to GitHub and open a pull request using the text in `docs/pull-request.md`.
-
-## 14. Glossary and likely interview questions
+## 14. Glossary
 
 | Word | Plain meaning |
 | --- | --- |
@@ -433,16 +429,3 @@ One honest note: my build environment could not download the Docker base image, 
 | Prompt injection | Text in a document that tries to give the AI orders |
 | LangGraph node / edge | A step function / the arrow to the next step |
 | Fixture (pytest) | Reusable test setup, like "start the simulator" |
-
-**Questions an interviewer will likely ask, with short answers**
-
-1. *Why build your own MCP server instead of calling the API directly?* - One standard interface any AI client can use; the token stays in one place; validation, retries and error mapping live there once.
-2. *How do MCP and RAG work together?* - The asset type and alarm name found through MCP choose the document filter and search words; then API recommendations are checked against the documents in `compose_answer`.
-3. *How do you stop hallucination?* - Every statement comes from a tool result `[T#]` or a chunk `[D#]`; low-confidence retrieval is flagged; the template answer cannot invent anything; the LLM prompt forbids new facts.
-4. *Why not use an LLM to plan?* - Deterministic and testable for a small set of intents; the next step would be LLM function-calling over the discovered schemas with this planner as a fallback.
-5. *Why TF-IDF?* - Small, technical corpus; no key; stable tests. Embeddings + a vector DB are the upgrade path.
-6. *What if the API is slow or down?* - Timeouts, retries for temporary errors, partial answers with visible warnings, documents-only mode.
-7. *How do you handle prompt injection?* - Flag at ingestion, strip at retrieval, wrap documents as data in the prompt, never let documents choose tools.
-8. *What would you improve?* - LLM planner, embeddings, per-user auth, Postgres memory, OpenTelemetry tracing, more tools (see `docs/known-limitations.md`).
-
-**Before you submit:** record the narrated demo video (up to 10 minutes) using `docs/demo-video-script.md` and paste its link in the README's Demo section; push the repo to GitHub and open the pull request.

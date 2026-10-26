@@ -6,9 +6,7 @@ with **operating procedures and manuals** (found through **document RAG**), and 
 with citations and a full MCP execution trace.
 
 > Selected use case: **Alarm Investigation and Procedure Guidance Copilot**
-> (from the Senior Software Engineer – Copilot Integration assignment package).
-
-![GUI - acceptance scenario](docs/screenshots/03-acceptance-scenario.png)
+> (from the Senior Software Engineer - Copilot Integration assignment package).
 
 ---
 
@@ -26,7 +24,6 @@ with citations and a full MCP execution trace.
 10. [Architecture summary](#architecture-summary)
 11. [Assumptions](#assumptions)
 12. [Known limitations](#known-limitations)
-13. [Demo](#demo)
 
 ---
 
@@ -35,10 +32,10 @@ with citations and a full MCP execution trace.
 - **Natural-language questions** such as *"Investigate recurring high-severity alarms for Boiler Feed Pump 101 over the last 90 days"*.
 - **Intent detection + planning** (7 intents: investigation, recurring causes, active alarms, highest priority, related assets, procedure, consistency check).
 - **MCP tool discovery** (`tools/list`) and **schema-aware invocation** (arguments checked against each tool's JSON schema before the call).
-- **Multi-step chaining**: asset name → `search_assets` → asset id → `get_alarms` → alarm id → `score_alarm_priority` / `get_operator_recommendations` → asset type → document filters.
+- **Multi-step chaining**: asset name -> `search_assets` -> asset id -> `get_alarms` -> alarm id -> `score_alarm_priority` / `get_operator_recommendations` -> asset type -> document filters.
 - **Document RAG** over SOPs, maintenance manuals, troubleshooting guides and safety instructions with **citations** `[D1]`, metadata filters, low-confidence handling and **prompt-injection protection**.
 - **Combined reasoning**: *measured* evidence (API, cited `[T6]`) vs *documented* guidance (RAG, cited `[D2]`); every API recommendation is checked against the documents and marked **supported / conflict / not in documents**.
-- **Failure handling**: retries with back-off, timeouts, error mapping, unavailable tools, invalid inputs, partial failures and an MCP-server-down degraded mode – all visible in the GUI.
+- **Failure handling**: retries with back-off, timeouts, error mapping, unavailable tools, invalid inputs, partial failures and an MCP-server-down degraded mode - all visible in the GUI.
 - **Context retention** per conversation (*"Which procedure applies to this alarm?"* reuses the previous asset/alarm).
 - **GUI**: chat, alarm summary panel, likely causes and recommendations, citations, expandable MCP trace with raw request/response, tool-discovery view with schemas, error/retry notes, JSON/Markdown export, responsive layout.
 
@@ -46,7 +43,7 @@ with citations and a full MCP execution trace.
 
 | Layer | Technology |
 |---|---|
-| GUI | FastAPI + Jinja2 template + plain JavaScript/CSS (same style as TripMate) |
+| GUI | FastAPI + Jinja2 template + plain JavaScript/CSS |
 | Copilot backend | FastAPI, **LangGraph** `StateGraph` with `MemorySaver` checkpointer |
 | MCP client | `langchain-mcp-adapters` `MultiServerMCPClient` (stdio or streamable HTTP) + `jsonschema` |
 | MCP server | `mcp` **FastMCP** with Pydantic input/output models |
@@ -64,7 +61,7 @@ with citations and a full MCP execution trace.
 .
 ├── README.md
 ├── docs/                      architecture, diagram, MCP tool catalog, RAG design, API integration,
-│                              design decisions, known limitations, screenshots, test evidence, demo
+│                              design decisions, known limitations, code walkthrough, test evidence
 ├── apps/
 │   ├── alarm_simulator/       Alarm Management API simulator (the source system)
 │   ├── backend/               copilot: FastAPI app, LangGraph workflow, planner, MCP client, answer builder
@@ -81,7 +78,7 @@ with citations and a full MCP execution trace.
 │   └── tests/                 RAG tests
 ├── tests/{unit,integration,e2e}
 ├── postman/                   reference collections + my contract-test collection
-├── test-data/                 sample questions used in demos
+├── test-data/                 sample questions
 ├── scripts/                   run_local.sh, run_postman.sh, demo_failure.sh, generate_tool_catalog.py
 ├── .github/workflows/ci.yml
 ├── .env.example  .gitignore  Dockerfile  docker-compose.yml  Makefile  LICENSE  pyproject.toml
@@ -91,7 +88,7 @@ with citations and a full MCP execution trace.
 
 ## Quick start
 
-### Option A – Docker (everything in one command)
+### Option A - Docker (everything in one command)
 
 ```bash
 cp .env.example .env            # optional: add GROQ_API_KEY for LLM-written answers
@@ -104,7 +101,18 @@ docker compose up --build
 | Alarm API simulator | http://localhost:8000 (Swagger at `/docs`) |
 | MCP server (streamable HTTP) | http://localhost:9000/mcp (health: `/health`) |
 
-### Option B – Local Python (no Docker)
+### Option B - Local Python (no Docker)
+
+What you need on your machine:
+
+- Python 3.11 or newer (`python3 --version`)
+- pip and internet access for the first install
+- Ports 8000 (Alarm API) and 8080 (GUI + backend) free
+- Optional: a Groq API key in `.env` for LLM-written answers (without it the template answer is used)
+- Optional: Node.js + `npm i -g newman` to run the Postman collections from the terminal
+
+The frontend is served by the same FastAPI app as the backend, so there is no separate frontend server or `npm install`.
+The MCP server is started automatically by the backend (stdio), so locally you only run two processes.
 
 ```bash
 python -m venv .venv
@@ -153,24 +161,24 @@ All configuration is through environment variables (see [`.env.example`](.env.ex
 | `MCP_TRANSPORT` / `MCP_HOST` / `MCP_PORT` | `stdio` / `127.0.0.1` / `9000` | MCP server | transport settings |
 | `MCP_TOOL_TIMEOUT_SECONDS` | `30` | copilot | overall timeout per tool call |
 | `MCP_DISABLED_TOOLS` | empty | MCP server | hide tools (demo "tool unavailable") |
-| `LLM_PROVIDER` / `GROQ_API_KEY` / `LLM_MODEL` | `groq` / – / `llama-3.3-70b-versatile` | copilot | LLM answer; `none` or no key = template answer |
+| `LLM_PROVIDER` / `GROQ_API_KEY` / `LLM_MODEL` | `groq` / - / `llama-3.3-70b-versatile` | copilot | LLM answer; `none` or no key = template answer |
 | `DOCUMENT_PATH` / `RAG_INDEX_PATH` / `RAG_MIN_SCORE` | `rag/documents` / `rag/index/alarm_docs_index.json` / `0.12` | RAG | corpus, index, confidence threshold |
 | `SIM_FAILURE_RATE` / `SIM_LATENCY_MS` | `0` | simulator | inject failures/latency for demos |
 
 ## MCP server
 
 `mcp-servers/alarm-management/alarm_mcp_server.py` is a **FastMCP** server that exposes the Alarm Management API as **9 typed tools**.
-The copilot never calls the Alarm API directly – only through these tools.
+The copilot never calls the Alarm API directly - only through these tools.
 
 | Tool | API operation | Purpose |
 |---|---|---|
-| `search_assets` | `GET /assets/search` | asset name → asset id |
+| `search_assets` | `GET /assets/search` | asset name -> asset id |
 | `get_asset_metadata` | `GET /assets/{id}/metadata` | criticality, limits, related assets |
 | `get_alarms` | `GET /alarms` (+ pagination) | active / historical alarms |
 | `get_alarm_details` | `GET /alarms/{id}` | one alarm |
 | `get_alarm_summary` | `POST /alarms/summary` | counts, recurring rate, ack delay |
 | `get_alarm_trends` | `POST /alarms/trends` | weekly/daily trend + direction |
-| `correlate_alarms` | `POST /alarms/correlation` | alarms that occur together → likely causes |
+| `correlate_alarms` | `POST /alarms/correlation` | alarms that occur together -> likely causes |
 | `score_alarm_priority` | `POST /alarms/priority-score` | 0-100 score, P1-P4, explanation |
 | `get_operator_recommendations` | `POST /recommendations/operator-actions` | recommended actions + related assets |
 
@@ -179,7 +187,7 @@ Full schemas, error/timeout behaviour and live examples: **[docs/mcp-tool-catalo
 **Start the MCP server on its own**
 
 ```bash
-# stdio (for MCP clients such as Claude Desktop or MCP Inspector)
+# stdio (for MCP clients such as MCP Inspector)
 python mcp-servers/alarm-management/alarm_mcp_server.py
 
 # streamable HTTP on http://localhost:9000/mcp
@@ -201,8 +209,8 @@ The server needs `ALARM_API_BASE_URL` and `ALARM_API_TOKEN` (the simulator must 
 python -m rag.ingestion.ingest     # -> rag/index/alarm_docs_index.json (35 chunks)
 ```
 
-Ingestion = read files → parse metadata → split by `##` section (long sections split by paragraph with overlap) → flag injection text → save JSON index.
-Retrieval = metadata filters (equipment type / doc type) → TF-IDF cosine + keyword-overlap hybrid score → confidence check → strip injected sentences → citations.
+Ingestion = read files -> parse metadata -> split by `##` section (long sections split by paragraph with overlap) -> flag injection text -> save JSON index.
+Retrieval = metadata filters (equipment type / doc type) -> TF-IDF cosine + keyword-overlap hybrid score -> confidence check -> strip injected sentences -> citations.
 Details: **[docs/rag-design.md](docs/rag-design.md)**.
 
 ## Tests and Postman
@@ -220,10 +228,10 @@ bash scripts/run_postman.sh   # all Postman collections against a running simula
 | MCP server | `tests/integration/test_mcp_server.py` | tool registration/discovery, schemas, validation, error mapping, retries, trace propagation |
 | MCP client | `tests/integration/test_mcp_client_integration.py` | real stdio connection, discovery, chaining, invalid args, missing tool, partial failure |
 | RAG | `rag/tests/test_rag.py` | ingestion, chunking, metadata, relevance, filters, citations, no-result, injection |
-| End-to-end | `tests/e2e/test_copilot_e2e.py` | HTTP request → LangGraph → real MCP server → simulator → RAG → grounded answer with citations |
+| End-to-end | `tests/e2e/test_copilot_e2e.py` | HTTP request -> LangGraph -> real MCP server -> simulator -> RAG -> grounded answer with citations |
 
 Evidence: [`docs/test-evidence/`](docs/test-evidence) (pytest + coverage output, newman results for all 4 collections).
-The 3 reference Postman collections (`Simulator`, `Scenarios`, `Chaining` – 62 requests) and my contract collection (12 requests, 23 assertions) all pass.
+The 3 reference Postman collections (`Simulator`, `Scenarios`, `Chaining` - 62 requests) and the contract collection (12 requests, 23 assertions) all pass.
 To use the Postman app instead: import the files in `postman/` plus `postman/local.postman_environment.json` and run the collections.
 
 ## Sample interactions
@@ -235,7 +243,7 @@ To use the Postman app instead: import the files in `postman/` plus `postman/loc
 | *Which alarm has the highest priority in EastRefinery, and why?* | Fetches active site alarms, scores each, picks the K-501 High Discharge Pressure alarm (P1) and explains the factors. |
 | *Why are compressor discharge pressure alarms repeatedly occurring?* | Resolves "compressor" to 3 assets, focuses on K-501, correlation shows Discharge Cooler E-501 high outlet temperature first; cites TG-CMP-003 (cooler fouling). |
 | *What related assets should be inspected for this motor trip alarm?* | Focuses on Compressor Motor M-501; Lube Oil Pump LOP-501 low pressure precedes trips; SOP-MTR-004 cited. |
-| *Investigate Pump XYZ 999* | No exact asset match → asks for clarification and shows the closest assets. |
+| *Investigate Pump XYZ 999* | No exact asset match -> asks for clarification and shows the closest assets. |
 
 More questions: [`test-data/sample_questions.json`](test-data/sample_questions.json).
 
@@ -243,17 +251,17 @@ More questions: [`test-data/sample_questions.json`](test-data/sample_questions.j
 
 ![Architecture](docs/architecture-diagram.png)
 
-GUI → `/api/chat` → **LangGraph** workflow (`plan → discover_tools → resolve_scope → fetch_alarms → analyze_alarms → prioritize_and_recommend → asset_context → retrieve_documents → compose_answer`).
-All alarm data flows **GUI → copilot → MCP client → MCP server → connector → Alarm API**. Documents flow **corpus → ingestion → index → retriever → evidence combiner**.
+GUI -> `/api/chat` -> **LangGraph** workflow (`plan -> discover_tools -> resolve_scope -> fetch_alarms -> analyze_alarms -> prioritize_and_recommend -> asset_context -> retrieve_documents -> compose_answer`).
+All alarm data flows **GUI -> copilot -> MCP client -> MCP server -> connector -> Alarm API**. Documents flow **corpus -> ingestion -> index -> retriever -> evidence combiner**.
 Both paths meet in `compose_answer`, which separates measured evidence, document guidance and generated text.
 Full request flow, auth boundaries and observability: **[docs/architecture.md](docs/architecture.md)**.
 Beginner-friendly code walkthrough: **[docs/CODE_EXPLANATION.md](docs/CODE_EXPLANATION.md)**.
-Other docs: [api-integration.md](docs/api-integration.md) · [design-decisions.md](docs/design-decisions.md) · [known-limitations.md](docs/known-limitations.md).
+Other docs: [api-integration.md](docs/api-integration.md) | [design-decisions.md](docs/design-decisions.md) | [known-limitations.md](docs/known-limitations.md).
 
 ## Assumptions
 
 - The Postman collections are the contract; response bodies were not given, so the simulator's response shapes are my own design (documented in `docs/api-integration.md`).
-- Plant data is synthetic and deterministic (seeded), starting 2026-04-01 up to "now", with a few built-in patterns (valve → pump pressure, cooler → compressor, lube oil → motor trip, Unit 2 floods).
+- Plant data is synthetic and deterministic (seeded), starting 2026-04-01 up to "now", with a few built-in patterns (valve -> pump pressure, cooler -> compressor, lube oil -> motor trip, Unit 2 floods).
 - "Last N days" is relative to the current UTC time; with no range given the copilot uses 90 days and says so.
 - One shared API token is enough for a simulator; real deployments would use per-user OAuth (see limitations).
 - An LLM is optional so the solution runs and is testable without any paid key.
@@ -264,9 +272,7 @@ Short list (full list in [docs/known-limitations.md](docs/known-limitations.md))
 rule-based planner (not LLM tool-calling), TF-IDF instead of neural embeddings, heuristic conflict detection,
 in-memory conversation store, synthetic data, single shared API token, English only.
 
-## Demo
+## Failure testing
 
-- Screenshots: [`docs/screenshots/`](docs/screenshots) – tool discovery, MCP trace, RAG citations, API-vs-procedure conflict, follow-up context, partial failure, prompt-injection removal, unknown asset, mobile layout.
-- Silent screen recording of the GUI flow: [`docs/demo/silent-walkthrough.webm`](docs/demo/silent-walkthrough.webm).
-- **Demo video (up to 10 minutes): _add your link here after recording_** – a minute-by-minute script is in [docs/demo-video-script.md](docs/demo-video-script.md).
-- Failure demo helpers: `bash scripts/demo_failure.sh correlation` (503 on one endpoint), `flaky` (30% random failures), `reset`.
+With the simulator running: `bash scripts/demo_failure.sh correlation` makes `/alarms/correlation` return 503,
+`flaky` makes 30% of calls fail (retries usually recover), `reset` goes back to normal.

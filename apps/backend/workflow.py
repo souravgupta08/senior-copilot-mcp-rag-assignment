@@ -1,15 +1,7 @@
-"""
-Copilot orchestration with LangGraph.
+"""LangGraph workflow for one copilot turn.
 
-Graph (one run per user message):
-
-  plan -> discover_tools -> resolve_scope --(no scope)--------------------------> compose_answer
-                                          \\-(MCP down)-> retrieve_documents ----> compose_answer
-                                          \\-> fetch_alarms -> analyze_alarms -> prioritize_and_recommend
-                                                -> asset_context -> retrieve_documents -> compose_answer
-
-Every MCP call goes through the McpToolbox (apps/backend/mcp_client.py),
-which records the call in the execution trace shown in the GUI.
+plan -> discover_tools -> resolve_scope -> fetch_alarms -> analyze_alarms
+  -> prioritize_and_recommend -> asset_context -> retrieve_documents -> compose_answer
 """
 
 import operator

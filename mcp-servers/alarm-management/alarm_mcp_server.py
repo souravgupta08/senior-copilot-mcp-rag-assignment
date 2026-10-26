@@ -1,12 +1,7 @@
-"""
-Alarm Management MCP Server.
+"""Alarm Management MCP server.
 
-Exposes the Alarm Management API as MCP tools so that any MCP client
-(our copilot, Claude Desktop, MCP Inspector ...) can discover and call them.
-
-Run it on its own:
-    python mcp-servers/alarm-management/alarm_mcp_server.py                 # stdio (default)
-    MCP_TRANSPORT=streamable-http python mcp-servers/alarm-management/alarm_mcp_server.py   # http://localhost:9000/mcp
+python mcp-servers/alarm-management/alarm_mcp_server.py                     # stdio
+MCP_TRANSPORT=streamable-http python mcp-servers/alarm-management/alarm_mcp_server.py  # :9000/mcp
 """
 
 import json
@@ -47,7 +42,7 @@ from connectors.alarm_api_client import AlarmApiClient, AlarmApiError  # noqa: E
 
 load_dotenv()
 
-# IMPORTANT: with stdio transport, stdout is the MCP channel, so logs go to stderr.
+# stdout is the MCP channel in stdio mode, so log to stderr
 logging.basicConfig(level=logging.INFO, stream=sys.stderr, format="%(message)s")
 logger = logging.getLogger("alarm-mcp")
 logging.getLogger("httpx").setLevel(logging.WARNING)

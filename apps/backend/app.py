@@ -1,9 +1,6 @@
-"""
-FastAPI app for the Alarm Investigation Copilot (backend + GUI).
+"""Copilot API + GUI.
 
-Run:
-    uvicorn apps.backend.app:app --port 8080
-Then open http://127.0.0.1:8080
+uvicorn apps.backend.app:app --port 8080
 """
 
 import json

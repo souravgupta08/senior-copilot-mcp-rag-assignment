@@ -1,11 +1,4 @@
-"""
-Combines MCP (API) evidence and RAG (document) evidence into one grounded answer.
-
-We keep three kinds of statements clearly separated:
-  - MEASURED evidence  -> comes from MCP tool results, cited as [T3] (trace step 3)
-  - DOCUMENT guidance  -> comes from retrieved chunks, cited as [D1] (document 1)
-  - GENERATED summary  -> written by the copilot (LLM or template) from the two above
-"""
+"""Builds the final answer from MCP results ([T#] refs) and retrieved documents ([D#] refs)."""
 
 import os
 import re

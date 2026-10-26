@@ -1,14 +1,4 @@
-"""
-Planner: reads the user's question and decides WHAT to do.
-
-It is rule based (keywords + regular expressions), so it is fast, free and
-easy to test. The output is a "plan" dict that the workflow follows.
-
-Example:
-    "Investigate recurring high-severity alarms for Boiler Feed Pump 101 over the last 90 days"
-    -> intent="investigation", asset_query="Boiler Feed Pump 101", days=90,
-       severity=["high","critical"], steps=[alarms, metadata, summary, trends, correlation, ...]
-"""
+"""Rule-based planner: intent, asset/site, time range and the steps to run."""
 
 import re
 from datetime import datetime, timedelta, timezone

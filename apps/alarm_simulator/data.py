@@ -1,13 +1,4 @@
-"""
-Fake (synthetic) plant data for the Alarm Management API simulator.
-
-We create:
-- a list of ASSETS (pumps, motors, compressors, valves ...)
-- a list of ALARMS raised on those assets
-
-Everything is generated with a fixed random seed, so the data looks the
-same every time the simulator starts. That makes tests repeatable.
-"""
+"""Synthetic assets and alarms for the simulator (seeded, so runs are repeatable)."""
 
 import random
 from datetime import datetime, timedelta, timezone
